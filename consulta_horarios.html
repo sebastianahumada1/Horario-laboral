@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Consulta de Horarios - Nómina</title>
-    <!-- Versión: 20251218142833 -->
+    <title>Consulta de Horarios</title>
+    <!-- Versión: 20251218143259 -->
     <style>
         * {
             margin: 0;
@@ -375,7 +375,8 @@
 
             .analistas-grid {
                 grid-template-columns: 1fr;
-                max-height: 300px;
+                max-height: none;
+                overflow-y: visible;
                 gap: 10px;
                 padding: 10px;
             }
@@ -485,9 +486,11 @@
             min-height: 44px; /* Tamaño mínimo táctil recomendado */
         }
 
-        /* Mejorar scroll en móviles */
-        .analistas-grid {
-            -webkit-overflow-scrolling: touch;
+        /* Mejorar scroll en móviles - solo para desktop */
+        @media (min-width: 769px) {
+            .analistas-grid {
+                -webkit-overflow-scrolling: touch;
+            }
         }
     </style>
 </head>
