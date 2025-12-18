@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Consulta de Horarios</title>
-    <!-- Versión: 20251218143259 -->
+    <!-- Versión: 20251218145142 -->
     <style>
         * {
             margin: 0;
@@ -301,6 +301,69 @@
             transform: translateY(-1px);
         }
 
+        .btn-rotaciones {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 600;
+            transition: all 0.3s;
+            min-height: 44px;
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-rotaciones:hover {
+            background: #218838;
+            transform: translateY(-1px);
+        }
+
+        .rotaciones-container {
+            margin-top: 30px;
+            display: none;
+        }
+
+        .rotaciones-container.show {
+            display: block;
+        }
+
+        .rotacion-item {
+            background: #f8f9fa;
+            border-left: 4px solid #28a745;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .rotacion-nombre {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .rotacion-periodo {
+            background: white;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border-left: 3px solid #667eea;
+        }
+
+        .rotacion-horario {
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+
+        .rotacion-fechas {
+            color: #666;
+            font-size: 0.95em;
+        }
+
         /* Responsive Design - Tablets */
         @media (max-width: 968px) {
             .content {
@@ -446,6 +509,26 @@
                 padding: 12px;
                 font-size: 0.95em;
             }
+
+            .rotacion-item {
+                padding: 15px;
+            }
+
+            .rotacion-nombre {
+                font-size: 1.1em;
+            }
+
+            .rotacion-periodo {
+                padding: 12px;
+            }
+
+            .rotacion-horario {
+                font-size: 1em;
+            }
+
+            .rotacion-fechas {
+                font-size: 0.9em;
+            }
         }
 
         /* Responsive Design - Móviles pequeños */
@@ -515,6 +598,7 @@
                 <div class="botones-seleccion">
                     <button class="btn-seleccionar" onclick="seleccionarTodos()">Seleccionar Todos</button>
                     <button class="btn-deseleccionar" onclick="deseleccionarTodos()">Deseleccionar Todos</button>
+                    <button class="btn-rotaciones" onclick="mostrarRotacionesHorarios()">📅 Ver Rotaciones de Horarios</button>
                 </div>
                 <div class="analistas-grid" id="analistas-grid">
                     <div class="loading">Cargando analistas...</div>
@@ -522,6 +606,11 @@
                 <div style="margin-top: 15px; text-align: center;">
                     <button class="btn-consultar" onclick="consultarHorarios()">🔍 Consultar Horarios</button>
                 </div>
+            </div>
+
+            <div class="rotaciones-container" id="rotaciones-container">
+                <h2 class="section-title">Rotaciones de Horarios</h2>
+                <div id="rotaciones-content"></div>
             </div>
 
             <div class="resultados" id="resultados">
@@ -1007,6 +1096,204 @@
 
         function deseleccionarTodos() {
             document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+        }
+
+        // Función para formatear fechas
+        function formatearFecha(fecha) {
+            const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 
+                          'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+            const diasSemana = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+            return `${diasSemana[fecha.getDay()]}, ${fecha.getDate()} de ${meses[fecha.getMonth()]} de ${fecha.getFullYear()}`;
+        }
+
+        // Función para calcular períodos de rotación de horarios
+        function calcularRotacionesHorarios(nombreEmpleado, fechaReferencia) {
+            const fechaRef = new Date(fechaReferencia.getFullYear(), fechaReferencia.getMonth(), fechaReferencia.getDate(), 12, 0, 0, 0);
+            const rotaciones = [];
+
+            if (nombreEmpleado === 'Sebastian Ahumada') {
+                // Sebastian: ciclo de 56 días (28 días cada horario)
+                // Inicio: 3 dic 2025 con 15:00-00:00
+                const fechaInicio = new Date(2025, 11, 3, 12, 0, 0, 0); // 3 dic 2025
+                
+                // Calcular cuántos ciclos completos han pasado
+                const delta = fechaRef - fechaInicio;
+                const diasDesdeInicio = Math.floor(delta / (1000 * 60 * 60 * 24));
+                const ciclosCompletos = Math.floor(diasDesdeInicio / 56);
+                
+                // Calcular el inicio del ciclo actual
+                const inicioCicloActual = new Date(fechaInicio);
+                inicioCicloActual.setDate(inicioCicloActual.getDate() + (ciclosCompletos * 56));
+                
+                // Período 1: 28 días con horario 15:00-00:00
+                const inicio1 = new Date(inicioCicloActual);
+                const fin1 = new Date(inicio1);
+                fin1.setDate(fin1.getDate() + 27);
+                rotaciones.push({ horario: '15:00 - 00:00', inicio: inicio1, fin: fin1 });
+                
+                // Período 2: 28 días con horario 00:00-09:00
+                const inicio2 = new Date(fin1);
+                inicio2.setDate(inicio2.getDate() + 1);
+                const fin2 = new Date(inicio2);
+                fin2.setDate(fin2.getDate() + 27);
+                rotaciones.push({ horario: '00:00 - 09:00', inicio: inicio2, fin: fin2 });
+                
+                // Agregar siguiente ciclo para referencia
+                const inicioSiguiente1 = new Date(fin2);
+                inicioSiguiente1.setDate(inicioSiguiente1.getDate() + 1);
+                const finSiguiente1 = new Date(inicioSiguiente1);
+                finSiguiente1.setDate(finSiguiente1.getDate() + 27);
+                rotaciones.push({ horario: '15:00 - 00:00', inicio: inicioSiguiente1, fin: finSiguiente1 });
+                
+            } else if (nombreEmpleado === 'Juan Sarmiento') {
+                // Juan Sarmiento: ciclo de 56 días (28 días cada horario), complemento de Sebastian
+                // Inicio: 3 dic 2025 con 00:00-09:00
+                const fechaInicio = new Date(2025, 11, 3, 12, 0, 0, 0); // 3 dic 2025
+                
+                const delta = fechaRef - fechaInicio;
+                const diasDesdeInicio = Math.floor(delta / (1000 * 60 * 60 * 24));
+                const ciclosCompletos = Math.floor(diasDesdeInicio / 56);
+                
+                const inicioCicloActual = new Date(fechaInicio);
+                inicioCicloActual.setDate(inicioCicloActual.getDate() + (ciclosCompletos * 56));
+                
+                // Período 1: 28 días con horario 00:00-09:00
+                const inicio1 = new Date(inicioCicloActual);
+                const fin1 = new Date(inicio1);
+                fin1.setDate(fin1.getDate() + 27);
+                rotaciones.push({ horario: '00:00 - 09:00', inicio: inicio1, fin: fin1 });
+                
+                // Período 2: 28 días con horario 15:00-00:00
+                const inicio2 = new Date(fin1);
+                inicio2.setDate(inicio2.getDate() + 1);
+                const fin2 = new Date(inicio2);
+                fin2.setDate(fin2.getDate() + 27);
+                rotaciones.push({ horario: '15:00 - 00:00', inicio: inicio2, fin: fin2 });
+                
+                // Agregar siguiente ciclo
+                const inicioSiguiente1 = new Date(fin2);
+                inicioSiguiente1.setDate(inicioSiguiente1.getDate() + 1);
+                const finSiguiente1 = new Date(inicioSiguiente1);
+                finSiguiente1.setDate(finSiguiente1.getDate() + 27);
+                rotaciones.push({ horario: '00:00 - 09:00', inicio: inicioSiguiente1, fin: finSiguiente1 });
+                
+            } else if (nombreEmpleado === 'Oscar Riveros Rodriguez') {
+                // Oscar: ciclo de 70 días (14 días 00:00-09:00, luego 56 días 06:00-15:00)
+                // Inicio: 3 sep 2025 con 00:00-09:00
+                const fechaInicio = new Date(2025, 8, 3, 12, 0, 0, 0); // 3 sep 2025
+                
+                const delta = fechaRef - fechaInicio;
+                const diasDesdeInicio = Math.floor(delta / (1000 * 60 * 60 * 24));
+                const ciclosCompletos = Math.floor(diasDesdeInicio / 70);
+                
+                const inicioCicloActual = new Date(fechaInicio);
+                inicioCicloActual.setDate(inicioCicloActual.getDate() + (ciclosCompletos * 70));
+                
+                // Período 1: 14 días con horario 00:00-09:00
+                const inicio1 = new Date(inicioCicloActual);
+                const fin1 = new Date(inicio1);
+                fin1.setDate(fin1.getDate() + 13);
+                rotaciones.push({ horario: '00:00 - 09:00', inicio: inicio1, fin: fin1 });
+                
+                // Período 2: 56 días con horario 06:00-15:00
+                const inicio2 = new Date(fin1);
+                inicio2.setDate(inicio2.getDate() + 1);
+                const fin2 = new Date(inicio2);
+                fin2.setDate(fin2.getDate() + 55);
+                rotaciones.push({ horario: '06:00 - 15:00', inicio: inicio2, fin: fin2 });
+                
+                // Agregar siguiente ciclo
+                const inicioSiguiente1 = new Date(fin2);
+                inicioSiguiente1.setDate(inicioSiguiente1.getDate() + 1);
+                const finSiguiente1 = new Date(inicioSiguiente1);
+                finSiguiente1.setDate(finSiguiente1.getDate() + 13);
+                rotaciones.push({ horario: '00:00 - 09:00', inicio: inicioSiguiente1, fin: finSiguiente1 });
+                
+            } else if (nombreEmpleado === 'Johan Velandia') {
+                // Johan: ciclo de 70 días (14 días 06:00-15:00, luego 56 días 00:00-09:00), complemento de Oscar
+                // Inicio: 3 sep 2025 con 06:00-15:00
+                const fechaInicio = new Date(2025, 8, 3, 12, 0, 0, 0); // 3 sep 2025
+                
+                const delta = fechaRef - fechaInicio;
+                const diasDesdeInicio = Math.floor(delta / (1000 * 60 * 60 * 24));
+                const ciclosCompletos = Math.floor(diasDesdeInicio / 70);
+                
+                const inicioCicloActual = new Date(fechaInicio);
+                inicioCicloActual.setDate(inicioCicloActual.getDate() + (ciclosCompletos * 70));
+                
+                // Período 1: 14 días con horario 06:00-15:00
+                const inicio1 = new Date(inicioCicloActual);
+                const fin1 = new Date(inicio1);
+                fin1.setDate(fin1.getDate() + 13);
+                rotaciones.push({ horario: '06:00 - 15:00', inicio: inicio1, fin: fin1 });
+                
+                // Período 2: 56 días con horario 00:00-09:00
+                const inicio2 = new Date(fin1);
+                inicio2.setDate(inicio2.getDate() + 1);
+                const fin2 = new Date(inicio2);
+                fin2.setDate(fin2.getDate() + 55);
+                rotaciones.push({ horario: '00:00 - 09:00', inicio: inicio2, fin: fin2 });
+                
+                // Agregar siguiente ciclo
+                const inicioSiguiente1 = new Date(fin2);
+                inicioSiguiente1.setDate(inicioSiguiente1.getDate() + 1);
+                const finSiguiente1 = new Date(inicioSiguiente1);
+                finSiguiente1.setDate(finSiguiente1.getDate() + 13);
+                rotaciones.push({ horario: '06:00 - 15:00', inicio: inicioSiguiente1, fin: finSiguiente1 });
+            }
+            
+            return rotaciones;
+        }
+
+        // Función para mostrar rotaciones de horarios
+        function mostrarRotacionesHorarios() {
+            const container = document.getElementById('rotaciones-container');
+            const content = document.getElementById('rotaciones-content');
+            
+            if (container.classList.contains('show')) {
+                // Ocultar
+                container.classList.remove('show');
+                return;
+            }
+            
+            // Empleados que tienen rotación de horarios
+            const empleadosConRotacion = ['Sebastian Ahumada', 'Juan Sarmiento', 'Oscar Riveros Rodriguez', 'Johan Velandia'];
+            const fechaActual = new Date();
+            
+            let html = '';
+            
+            empleadosConRotacion.forEach(nombre => {
+                const rotaciones = calcularRotacionesHorarios(nombre, fechaActual);
+                if (rotaciones.length > 0) {
+                    html += `<div class="rotacion-item">
+                        <div class="rotacion-nombre">${nombre}</div>`;
+                    
+                    rotaciones.forEach((rotacion, index) => {
+                        const esActual = fechaActual >= rotacion.inicio && fechaActual <= rotacion.fin;
+                        const claseActual = esActual ? ' style="border-left-color: #28a745; background: #d4edda;"' : '';
+                        
+                        html += `<div class="rotacion-periodo"${claseActual}>
+                            <div class="rotacion-horario">${rotacion.horario} ${esActual ? '<span style="color: #28a745; font-size: 0.9em;">(ACTUAL)</span>' : ''}</div>
+                            <div class="rotacion-fechas">
+                                <strong>Inicio:</strong> ${formatearFecha(rotacion.inicio)}<br>
+                                <strong>Fin:</strong> ${formatearFecha(rotacion.fin)}
+                            </div>
+                        </div>`;
+                    });
+                    
+                    html += `</div>`;
+                }
+            });
+            
+            if (html === '') {
+                html = '<div class="no-seleccion">No hay empleados con rotación de horarios</div>';
+            }
+            
+            content.innerHTML = html;
+            container.classList.add('show');
+            
+            // Scroll suave a las rotaciones
+            container.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
         // Establecer fecha por defecto (hoy)
