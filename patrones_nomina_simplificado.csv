@@ -1,0 +1,9 @@
+Nombre;Horario;Grupo;Días Laborales;Trabaja Festivos;Trabaja Domingos;Patrón Semanal (L=1, M=2, X=3, J=4, V=5, S=6, D=7)
+Angela Garnica Centanaro;09:00 -18:00;A;Lunes, Martes, Miércoles, Jueves, Viernes;Sí;Sí;1:Sí, 2:Sí, 3:Sí, 4:Sí, 5:Sí, 6:No, 7:No
+Daniel Alfonso Lara Torres;06:00 - 15:00;A;Miércoles, Jueves, Viernes (solo semanas Grupo A);Sí;Sí;1:No, 2:No, 3:Sí*, 4:Sí*, 5:Sí*, 6:No, 7:No *Rotación semanal con Juan
+Johan Velandia;06:00 - 15:00;B;Miércoles, Jueves, Viernes, Sábado, Domingo;Sí;Sí;1:No, 2:No, 3:Sí, 4:Sí, 5:Sí, 6:Sí, 7:Sí
+Juan David Gahona Ramirez;06:00 - 15:00;B;Miércoles, Jueves, Viernes (solo semanas Grupo B);Sí;Sí;1:No, 2:No, 3:Sí*, 4:Sí*, 5:Sí*, 6:No, 7:No *Rotación semanal con Daniel
+Juan Sarmiento;00:00 - 09:00;A;Miércoles, Jueves, Viernes;Sí;Sí;1:No, 2:No, 3:Sí, 4:Sí, 5:Sí, 6:No, 7:No
+Julian Sarmiento;15:00 -00:00;B;Miércoles, Jueves, Viernes, Sábado, Domingo;Sí;Sí;1:No, 2:No, 3:Sí, 4:Sí, 5:Sí, 6:Sí, 7:Sí
+Oscar Riveros Rodriguez;00:00 - 09:00;B;Miércoles, Jueves, Viernes, Sábado, Domingo;Sí;Sí;1:No, 2:No, 3:Sí, 4:Sí, 5:Sí, 6:Sí, 7:Sí
+Sebastian Ahumada;15:00 -00:00;A;Miércoles, Jueves, Viernes;Sí;Sí;1:No, 2:No, 3:Sí, 4:Sí, 5:Sí, 6:No, 7:No

@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta de Horarios - Nómina</title>
+    <!-- Versión: 20251218120133 -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .date-selector {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .date-selector label {
+            font-weight: 600;
+            color: #555;
+            font-size: 1.1em;
+        }
+
+        .date-selector input {
+            padding: 12px 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: all 0.3s;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .date-selector input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .analistas-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            background: #f9f9f9;
+        }
+
+        .analista-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .analista-item:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+        }
+
+        .analista-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+            cursor: pointer;
+        }
+
+        .analista-item label {
+            cursor: pointer;
+            flex: 1;
+            font-size: 0.95em;
+            color: #333;
+        }
+
+        .btn-consultar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1em;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-consultar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn-consultar:active {
+            transform: translateY(0);
+        }
+
+        .resultados {
+            margin-top: 30px;
+            display: none;
+        }
+
+        .resultados.show {
+            display: block;
+        }
+
+        .resultado-item {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .resultado-item.trabaja {
+            border-left-color: #28a745;
+            background: #d4edda;
+        }
+
+        .resultado-item.no-trabaja {
+            border-left-color: #dc3545;
+            background: #f8d7da;
+        }
+
+        .resultado-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .resultado-nombre {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .resultado-estado {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        .resultado-estado.trabaja {
+            background: #28a745;
+            color: white;
+        }
+
+        .resultado-estado.no-trabaja {
+            background: #dc3545;
+            color: white;
+        }
+
+        .resultado-detalles {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .detalle-item {
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+        }
+
+        .detalle-label {
+            font-size: 0.85em;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .detalle-valor {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #667eea;
+            font-size: 1.2em;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border-left: 4px solid #dc3545;
+        }
+
+        .no-seleccion {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                padding: 20px;
+            }
+
+            .analistas-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .date-selector {
+                flex-direction: column;
+            }
+
+            .date-selector input {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📅 Consulta de Horarios</h1>
+            <p>Selecciona analistas y fecha para ver sus horarios</p>
+        </div>
+
+        <div class="content">
+            <div class="section">
+                <h2 class="section-title">1. Selecciona la Fecha</h2>
+                <div class="date-selector">
+                    <label for="fecha">Fecha:</label>
+                    <input type="date" id="fecha" required>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">2. Selecciona los Analistas</h2>
+                <div style="margin-bottom: 15px; text-align: right;">
+                    <button onclick="seleccionarTodos()" style="padding: 8px 20px; margin-right: 10px; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 0.9em;">Seleccionar Todos</button>
+                    <button onclick="deseleccionarTodos()" style="padding: 8px 20px; background: #999; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 0.9em;">Deseleccionar Todos</button>
+                </div>
+                <div class="analistas-grid" id="analistas-grid">
+                    <div class="loading">Cargando analistas...</div>
+                </div>
+                <div style="margin-top: 15px; text-align: center;">
+                    <button class="btn-consultar" onclick="consultarHorarios()">🔍 Consultar Horarios</button>
+                </div>
+            </div>
+
+            <div class="resultados" id="resultados">
+                <h2 class="section-title">Resultados</h2>
+                <div id="resultados-content"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let analistas = [];
+        // Fecha de inicio general: 17 de diciembre de 2025 (miércoles) - usado como fallback para patrones normales
+        let fechaInicio = new Date('2025-12-17');
+
+        // Datos de analistas (incluidos directamente para funcionar sin servidor)
+        const datosAnalistas = {
+            "empleados": [
+                {
+                    "nombre": "Angela Garnica Centanaro",
+                    "horario": "09:00 -18:00",
+                    "grupo": "A",
+                    "dias_laborales": [1, 2, 3, 4, 5],
+                    "dias_laborales_texto": ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"],
+                    "trabaja_festivos": true,
+                    "trabaja_domingos": true,
+                    "patron_semanal": {"1": true, "2": true, "3": true, "4": true, "5": true, "6": false, "7": false},
+                    "rotacion_mi_vi": true,
+                    "nota": "Misma rotación que Grupo A (Daniel). Rotación 10 días trabajo / 4 días descanso"
+                },
+                {
+                    "nombre": "Daniel Alfonso Lara Torres",
+                    "horario": "06:00 - 15:00",
+                    "grupo": "A",
+                    "dias_laborales": [3, 4, 5],
+                    "dias_laborales_texto": ["Miércoles", "Jueves", "Viernes"],
+                    "trabaja_festivos": true,
+                    "trabaja_domingos": true,
+                    "patron_semanal": {"1": false, "2": false, "3": true, "4": true, "5": true, "6": false, "7": false},
+                    "rotacion_mi_vi": true,
+                    "nota": "Rotación 10 días trabajo / 4 días descanso. Misma rotación que todos los del Grupo A (inicio 17 dic 2025)"
+                },
+                {
+                    "nombre": "Johan Velandia",
+                    "horario": "06:00 - 15:00",
+                    "grupo": "B",
+                    "dias_laborales": [3, 4, 5, 6, 7],
+                    "dias_laborales_texto": ["Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"],
+                    "trabaja_festivos": true,
+                    "trabaja_domingos": true,
+                    "patron_semanal": {"1": false, "2": false, "3": true, "4": true, "5": true, "6": true, "7": true},
+                    "rotacion_mi_vi": true,
+                    "nota": "Misma rotación de días que Grupo B (Juan Gahona). Alterna horarios complementario de Oscar Riveros: 14 días (1 ciclo) 06:00-15:00, luego 56 días (4 ciclos) 00:00-09:00. Inicio: 3 sep 2025 con 06:00-15:00"
+                },
+                {
+                    "nombre": "Juan David Gahona Ramirez",
+                    "horario": "06:00 - 15:00",
+                    "grupo": "B",
+                    "dias_laborales": [3, 4, 5],
+                    "dias_laborales_texto": ["Miércoles", "Jueves", "Viernes"],
+                    "trabaja_festivos": true,
+                    "trabaja_domingos": true,
+                    "patron_semanal": {"1": false, "2": false, "3": true, "4": true, "5": true, "6": false, "7": false},
+                    "rotacion_mi_vi": true,
+                    "nota": "Rotación 10 días trabajo / 4 días descanso. Misma rotación que todos los del Grupo B (inicio 10 dic 2025)"
+                },
+                {
+                    "nombre": "Juan Sarmiento",
+                    "horario": "00:00 - 09:00",
+                    "grupo": "A",
+                    "dias_laborales": [3, 4, 5],
+                    "dias_laborales_texto": ["Miércoles", "Jueves", "Viernes"],
+                    "trabaja_festivos": true,
+                    "trabaja_domingos": true,
+                    "patron_semanal": {"1": false, "2": false, "3": true, "4": true, "5": true, "6": false, "7": false},
+                    "rotacion_mi_vi": true,
+                    "nota": "Misma rotación de días que Grupo A (Daniel). Alterna horarios: 2 ciclos (28 días) 00:00-09:00, luego 2 ciclos (28 días) 15:00-00:00. Inicio: 3 dic 2025 con 00:00-09:00 (complemento de Sebastian)"
+                },
+                {
+                    "nombre": "Julian Sarmiento",
+                    "horario": "15:00 -00:00",
+                    "grupo": "B",
+                    "dias_laborales": [3, 4, 5, 6, 7],
+                    "dias_laborales_texto": ["Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"],
+                    "trabaja_festivos": true,
+                    "trabaja_domingos": true,
+                    "patron_semanal": {"1": false, "2": false, "3": true, "4": true, "5": true, "6": true, "7": true},
+                    "rotacion_mi_vi": true,
+                    "nota": "Misma rotación que Grupo B (Juan Gahona). Rotación 10 días trabajo / 4 días descanso"
+                },
+                {
+                    "nombre": "Oscar Riveros Rodriguez",
+                    "horario": "00:00 - 09:00",
+                    "grupo": "B",
+                    "dias_laborales": [3, 4, 5, 6, 7],
+                    "dias_laborales_texto": ["Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"],
+                    "trabaja_festivos": true,
+                    "trabaja_domingos": true,
+                    "patron_semanal": {"1": false, "2": false, "3": true, "4": true, "5": true, "6": true, "7": true},
+                    "rotacion_mi_vi": true,
+                    "nota": "Misma rotación de días que Grupo B (Juan Gahona). Alterna horarios: 14 días (1 ciclo) 00:00-09:00, luego 56 días (4 ciclos) 06:00-15:00. Inicio: 3 sep 2025 con 00:00-09:00"
+                },
+                {
+                    "nombre": "Sebastian Ahumada",
+                    "horario": "15:00 -00:00",
+                    "grupo": "A",
+                    "dias_laborales": [3, 4, 5],
+                    "dias_laborales_texto": ["Miércoles", "Jueves", "Viernes"],
+                    "trabaja_festivos": true,
+                    "trabaja_domingos": true,
+                    "patron_semanal": {"1": false, "2": false, "3": true, "4": true, "5": true, "6": false, "7": false},
+                    "rotacion_mi_vi": true,
+                    "nota": "Misma rotación de días que Grupo A (Daniel). Alterna horarios: 2 ciclos (28 días) 15:00-00:00, luego 2 ciclos (28 días) 00:00-09:00. Inicio: 3 dic 2025 con 15:00-00:00"
+                }
+            ]
+        };
+
+        // Cargar analistas
+        function cargarAnalistas() {
+            analistas = datosAnalistas.empleados;
+            mostrarAnalistas();
+        }
+
+        function mostrarAnalistas() {
+            const grid = document.getElementById('analistas-grid');
+            grid.innerHTML = analistas.map((analista, index) => `
+                <div class="analista-item">
+                    <input type="checkbox" id="analista-${index}" value="${index}">
+                    <label for="analista-${index}">${analista.nombre}</label>
+                </div>
+            `).join('');
+        }
+
+        // Fechas de inicio del ciclo según grupo
+        // Todos los empleados del Grupo A usan la misma rotación que Daniel (17 dic 2025)
+        // Todos los empleados del Grupo B usan la misma rotación que Juan Gahona (10 dic 2025)
+        // Usar componentes de fecha directamente para evitar problemas de zona horaria (UTC-5 Bogotá)
+        const fechaInicioCicloPorGrupo = {
+            'A': new Date(2025, 11, 17, 12, 0, 0, 0), // Miércoles 17 dic 2025 - día 1 del ciclo (mes 11 = diciembre)
+            'B': new Date(2025, 11, 10, 12, 0, 0, 0)   // Miércoles 10 dic 2025 - día 1 del ciclo (el 18 dic está en día 9)
+        };
+        
+        // Sebastian y Juan Sarmiento tienen patrones especiales de horarios alternados cada 2 ciclos (28 días)
+        // Sebastian: Inicio 3 dic 2025 con 15:00-00:00, cambio 31 dic 2025 a 00:00-09:00
+        // Juan Sarmiento: Inicio 3 dic 2025 con 00:00-09:00, cambio 31 dic 2025 a 15:00-00:00 (complemento de Sebastian)
+        // Patrón: 28 días con un horario, luego 28 días con el otro, y se repite (ciclo completo de 56 días)
+        const fechaInicioHorariosAlternados = new Date(2025, 11, 3, 12, 0, 0, 0); // 3 dic 2025
+        
+        // Oscar Riveros tiene un patrón especial: ciclo completo de 70 días (5 ciclos de 14 días)
+        // Inicio: 3 sep 2025 con 00:00-09:00 (días 1-14)
+        // Cambio 1: 17 sep 2025 a 06:00-15:00 (días 15-70, 56 días = 4 ciclos)
+        // Cambio 2: 12 nov 2025 vuelve a 00:00-09:00 y se repite
+        const fechaInicioHorariosOscar = new Date(2025, 8, 3, 12, 0, 0, 0); // 3 sep 2025
+        
+        function obtenerDiaCicloEmpleado(empleado, fecha) {
+            // Cada empleado tiene un ciclo de 14 días según su grupo
+            // Grupo A: inicio 17 dic 2025 (misma rotación que Daniel)
+            // Grupo B: inicio 10 dic 2025 (misma rotación que Juan Gahona)
+            // Días 1-10: trabaja
+            // Días 11-14: descansa
+            
+            let fechaInicioEmpleado;
+            
+            if (empleado.rotacion_mi_vi && fechaInicioCicloPorGrupo[empleado.grupo]) {
+                // Usar fecha de inicio según el grupo del empleado
+                fechaInicioEmpleado = fechaInicioCicloPorGrupo[empleado.grupo];
+            } else {
+                // Si no tiene patrón rotación, usar fecha inicio general
+                fechaInicioEmpleado = fechaInicio;
+            }
+            
+            // Normalizar fechas a mediodía para evitar problemas de zona horaria
+            const fechaInicioNorm = new Date(fechaInicioEmpleado.getFullYear(), fechaInicioEmpleado.getMonth(), fechaInicioEmpleado.getDate(), 12, 0, 0, 0);
+            const fechaNorm = new Date(fecha.getFullYear(), fecha.getMonth(), fecha.getDate(), 12, 0, 0, 0);
+            
+            const delta = fechaNorm - fechaInicioNorm;
+            const diasDesdeInicio = Math.floor(delta / (1000 * 60 * 60 * 24));
+            
+            // Calcular día del ciclo (1-14)
+            // díasDesdeInicio = 0 significa día 1 del ciclo (día de inicio)
+            // díasDesdeInicio = 1 significa día 2 del ciclo
+            // díasDesdeInicio = n significa día n+1 del ciclo
+            // Aplicar módulo 14 y sumar 1 para obtener día del ciclo (1-14)
+            let diaCiclo = ((diasDesdeInicio % 14) + 14) % 14;
+            diaCiclo = diaCiclo + 1; // diasDesdeInicio 0 = día 1, diasDesdeInicio 1 = día 2, etc.
+            
+            // Debug: mostrar cálculo
+            console.log(`[DEBUG] ${empleado.nombre}:`, {
+                fechaInicioNorm: fechaInicioNorm.toLocaleDateString(),
+                fechaNorm: fechaNorm.toLocaleDateString(),
+                diasDesdeInicio: diasDesdeInicio,
+                diaCiclo: diaCiclo
+            });
+            
+            return diaCiclo;
+        }
+        
+        function estaTrabajandoEnCiclo(diaCiclo) {
+            // Días 1-10: trabaja
+            // Días 11-14: descansa
+            return diaCiclo >= 1 && diaCiclo <= 10;
+        }
+        
+        function obtenerHorarioSebastian(fecha) {
+            // Sebastian: alterna horarios cada 2 ciclos (28 días)
+            // Inicio: 3 dic 2025 con horario 15:00-00:00
+            // Cambio: 31 dic 2025 (28 días después) a horario 00:00-09:00
+            // Patrón: 28 días (2 ciclos) con un horario, luego 28 días con el otro, y se repite (ciclo completo de 56 días)
+            
+            const fechaInicioNorm = new Date(fechaInicioHorariosAlternados.getFullYear(), fechaInicioHorariosAlternados.getMonth(), fechaInicioHorariosAlternados.getDate(), 12, 0, 0, 0);
+            const fechaNorm = new Date(fecha.getFullYear(), fecha.getMonth(), fecha.getDate(), 12, 0, 0, 0);
+            
+            const delta = fechaNorm - fechaInicioNorm;
+            const diasDesdeInicio = Math.floor(delta / (1000 * 60 * 60 * 24));
+            
+            // Calcular ciclo de horarios (1-4) dentro del ciclo completo de 56 días
+            // Ciclo de 56 días = 4 ciclos de 14 días
+            const cicloHorarios = Math.floor((diasDesdeInicio % 56) / 14) + 1;
+            
+            // Si está en ciclos 1-2 (días 0-27): horario 15:00-00:00
+            // Si está en ciclos 3-4 (días 28-55): horario 00:00-09:00
+            if (cicloHorarios <= 2) {
+                return '15:00 -00:00';
+            } else {
+                return '00:00 - 09:00';
+            }
+        }
+        
+        function obtenerHorarioJuanSarmiento(fecha) {
+            // Juan Sarmiento: alterna horarios cada 2 ciclos (28 días), complemento de Sebastian
+            // Inicio: 3 dic 2025 con horario 00:00-09:00
+            // Cambio: 31 dic 2025 (28 días después) a horario 15:00-00:00
+            // Patrón: 28 días (2 ciclos) con un horario, luego 28 días con el otro, y se repite (ciclo completo de 56 días)
+            
+            const fechaInicioNorm = new Date(fechaInicioHorariosAlternados.getFullYear(), fechaInicioHorariosAlternados.getMonth(), fechaInicioHorariosAlternados.getDate(), 12, 0, 0, 0);
+            const fechaNorm = new Date(fecha.getFullYear(), fecha.getMonth(), fecha.getDate(), 12, 0, 0, 0);
+            
+            const delta = fechaNorm - fechaInicioNorm;
+            const diasDesdeInicio = Math.floor(delta / (1000 * 60 * 60 * 24));
+            
+            // Calcular ciclo de horarios (1-4) dentro del ciclo completo de 56 días
+            // Ciclo de 56 días = 4 ciclos de 14 días
+            const cicloHorarios = Math.floor((diasDesdeInicio % 56) / 14) + 1;
+            
+            // Si está en ciclos 1-2 (días 0-27): horario 00:00-09:00
+            // Si está en ciclos 3-4 (días 28-55): horario 15:00-00:00
+            if (cicloHorarios <= 2) {
+                return '00:00 - 09:00';
+            } else {
+                return '15:00 -00:00';
+            }
+        }
+        
+        function obtenerHorarioOscarRiveros(fecha) {
+            // Oscar Riveros: ciclo completo de 70 días (5 ciclos de 14 días)
+            // Inicio: 3 sep 2025 con horario 00:00-09:00
+            // Días 1-14 (3 sep - 17 sep): 00:00-09:00
+            // Días 15-70 (17 sep - 12 nov): 06:00-15:00 (56 días = 4 ciclos)
+            // Día 71 (12 nov): vuelve a 00:00-09:00 y se repite
+            
+            const fechaInicioNorm = new Date(fechaInicioHorariosOscar.getFullYear(), fechaInicioHorariosOscar.getMonth(), fechaInicioHorariosOscar.getDate(), 12, 0, 0, 0);
+            const fechaNorm = new Date(fecha.getFullYear(), fecha.getMonth(), fecha.getDate(), 12, 0, 0, 0);
+            
+            const delta = fechaNorm - fechaInicioNorm;
+            const diasDesdeInicio = Math.floor(delta / (1000 * 60 * 60 * 24));
+            
+            // Calcular día dentro del ciclo completo de 70 días
+            const diaEnCiclo = ((diasDesdeInicio % 70) + 70) % 70;
+            
+            // Si está en días 0-13 (primer ciclo de 14 días): horario 00:00-09:00
+            // Si está en días 14-69 (4 ciclos siguientes de 14 días): horario 06:00-15:00
+            if (diaEnCiclo < 14) {
+                return '00:00 - 09:00';
+            } else {
+                return '06:00 - 15:00';
+            }
+        }
+        
+        function obtenerHorarioJohanVelandia(fecha) {
+            // Johan Velandia: complemento de Oscar Riveros, mismo ciclo de 70 días pero horarios invertidos
+            // Inicio: 3 sep 2025 con horario 06:00-15:00 (opuesto a Oscar)
+            // Días 1-14 (3 sep - 17 sep): 06:00-15:00 (mientras Oscar está en 00:00-09:00)
+            // Días 15-70 (17 sep - 12 nov): 00:00-09:00 (mientras Oscar está en 06:00-15:00)
+            // Día 71 (12 nov): vuelve a 06:00-15:00 y se repite
+            
+            const fechaInicioNorm = new Date(fechaInicioHorariosOscar.getFullYear(), fechaInicioHorariosOscar.getMonth(), fechaInicioHorariosOscar.getDate(), 12, 0, 0, 0);
+            const fechaNorm = new Date(fecha.getFullYear(), fecha.getMonth(), fecha.getDate(), 12, 0, 0, 0);
+            
+            const delta = fechaNorm - fechaInicioNorm;
+            const diasDesdeInicio = Math.floor(delta / (1000 * 60 * 60 * 24));
+            
+            // Calcular día dentro del ciclo completo de 70 días (mismo que Oscar)
+            const diaEnCiclo = ((diasDesdeInicio % 70) + 70) % 70;
+            
+            // Si está en días 0-13 (primer ciclo de 14 días): horario 06:00-15:00 (opuesto a Oscar)
+            // Si está en días 14-69 (4 ciclos siguientes de 14 días): horario 00:00-09:00 (opuesto a Oscar)
+            if (diaEnCiclo < 14) {
+                return '06:00 - 15:00';
+            } else {
+                return '00:00 - 09:00';
+            }
+        }
+
+        function obtenerTipoDia(fecha) {
+            const diaSemana = fecha.getDay();
+            if (diaSemana === 0) return 'Domingo';
+            // Aquí podrías agregar lógica para festivos
+            return 'Laboral';
+        }
+
+        function debeTrabajar(analista, fecha) {
+            // Normalizar fecha antes de calcular
+            const fechaNorm = new Date(fecha.getFullYear(), fecha.getMonth(), fecha.getDate(), 12, 0, 0, 0);
+            const diaSemana = fechaNorm.getDay() === 0 ? 7 : fechaNorm.getDay(); // 1=Lunes, 7=Domingo
+            const tipoDia = obtenerTipoDia(fechaNorm);
+
+            // Días que SIEMPRE trabajan ambos (Miércoles, Jueves, Viernes)
+            const diasMiVi = [3, 4, 5]; // Miércoles, Jueves, Viernes
+            
+            // Días que alternan (Sábado, Domingo, Lunes, Martes)
+            const diasAlternos = [6, 7, 1, 2]; // Sábado, Domingo, Lunes, Martes
+
+            // PATRÓN ESPECIAL: Rotación 10 días trabajo / 4 días descanso por grupo
+            // Grupo A: mismo ciclo que Daniel (inicio 17 dic 2025)
+            // Grupo B: mismo ciclo que Juan Gahona (inicio 10 dic 2025)
+            // - Días 1-10: trabaja (todos los días, incluido Mi-Vi y Sáb-Dom-Lun-Mar)
+            // - Días 11-14: descansa (todos los días)
+            const esPatronRotacion = analista.rotacion_mi_vi === true;
+
+            if (esPatronRotacion) {
+                // Obtener día del ciclo específico para este empleado (1-14)
+                const diaCiclo = obtenerDiaCicloEmpleado(analista, fechaNorm);
+                
+                // Si está en días 1-10 del ciclo = trabaja
+                // Si está en días 11-14 del ciclo = descansa
+                return estaTrabajandoEnCiclo(diaCiclo);
+            } else {
+                // Patrón normal: usar patrón semanal base
+                const trabajaBase = analista.patron_semanal && analista.patron_semanal[diaSemana.toString()] === true;
+                
+                // Determinar grupo activo para patrón normal (rotación semanal)
+                const fechaInicioNorm = new Date(fechaInicio.getFullYear(), fechaInicio.getMonth(), fechaInicio.getDate(), 12, 0, 0, 0);
+                const delta = fechaNorm - fechaInicioNorm;
+                const semanas = Math.floor(delta / (1000 * 60 * 60 * 24 * 7));
+                const grupoActivo = semanas % 2 === 0 ? 'A' : 'B';
+                const grupoCoincide = analista.grupo === grupoActivo;
+                
+                if (tipoDia === 'Festivo') {
+                    return trabajaBase && analista.trabaja_festivos && grupoCoincide;
+                } else if (tipoDia === 'Domingo') {
+                    return trabajaBase && analista.trabaja_domingos && grupoCoincide;
+                } else {
+                    return trabajaBase && grupoCoincide;
+                }
+            }
+        }
+
+        function consultarHorarios() {
+            const fechaInput = document.getElementById('fecha').value;
+            if (!fechaInput) {
+                alert('Por favor selecciona una fecha');
+                return;
+            }
+
+            // Crear fecha correctamente ajustada sin problemas de zona horaria (UTC-5 Bogotá)
+            // Parsear la fecha en formato YYYY-MM-DD y crear fecha local usando componentes
+            const [anio, mes, dia] = fechaInput.split('-').map(Number);
+            // Crear fecha en zona horaria local (Bogotá UTC-5) usando componentes
+            const fecha = new Date(anio, mes - 1, dia, 12, 0, 0, 0); // mes - 1 porque Date usa 0-11 para meses
+            
+            // Verificar que la fecha sea válida
+            if (isNaN(fecha.getTime())) {
+                alert('Fecha inválida');
+                return;
+            }
+            
+            const seleccionados = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'))
+                .map(cb => parseInt(cb.value));
+
+            if (seleccionados.length === 0) {
+                document.getElementById('resultados-content').innerHTML = 
+                    '<div class="no-seleccion">Por favor selecciona al menos un analista</div>';
+                document.getElementById('resultados').classList.add('show');
+                return;
+            }
+
+            const resultados = seleccionados.map(index => {
+                const analista = analistas[index];
+                // Asegurar que usamos la fecha normalizada para el cálculo
+                const fechaNormalizada = new Date(fecha.getFullYear(), fecha.getMonth(), fecha.getDate(), 12, 0, 0, 0);
+                const trabaja = debeTrabajar(analista, fechaNormalizada);
+                return { analista, trabaja };
+            });
+
+            mostrarResultados(resultados, fecha);
+        }
+
+        function mostrarResultados(resultados, fecha) {
+            // Asegurar que la fecha esté normalizada correctamente
+            const fechaNormalizada = new Date(fecha.getFullYear(), fecha.getMonth(), fecha.getDate(), 12, 0, 0, 0);
+            
+            const diasSemana = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+            const diaNombre = diasSemana[fechaNormalizada.getDay()];
+            
+            // Formatear fecha manualmente para evitar problemas de zona horaria
+            const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 
+                          'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+            const diasSemanaNombres = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+            
+            const fechaFormateada = `${diasSemanaNombres[fechaNormalizada.getDay()]}, ${fechaNormalizada.getDate()} de ${meses[fechaNormalizada.getMonth()]} de ${fechaNormalizada.getFullYear()}`;
+
+            const tipoDia = obtenerTipoDia(fechaNormalizada);
+            
+            // Obtener información de ciclo para empleados con rotación
+            let cicloInfoDetalle = '';
+            resultados.forEach(({ analista, trabaja }) => {
+                if (analista.rotacion_mi_vi) {
+                    const diaCiclo = obtenerDiaCicloEmpleado(analista, fechaNormalizada);
+                    const estadoCiclo = estaTrabajandoEnCiclo(diaCiclo) ? 'Trabajando' : 'Descansando';
+                    // Debug: verificar cálculo
+                    console.log(`${analista.nombre} - Fecha: ${fechaNormalizada.toLocaleDateString()} - Día ciclo: ${diaCiclo} - Estado: ${estadoCiclo}`);
+                    // Mostrar información del ciclo
+                    cicloInfoDetalle += `<br><strong>${analista.nombre}:</strong> Día ${diaCiclo} del ciclo (${estadoCiclo})`;
+                }
+            });
+
+            let html = `<div style="margin-bottom: 20px; padding: 15px; background: #e3f2fd; border-radius: 10px;">
+                <strong>📅 Fecha consultada:</strong> ${fechaFormateada}<br>
+                <strong>📋 Tipo de día:</strong> ${tipoDia}${cicloInfoDetalle}
+            </div>`;
+
+            resultados.forEach(({ analista, trabaja }) => {
+                const claseEstado = trabaja ? 'trabaja' : 'no-trabaja';
+                const estadoTexto = trabaja ? '✓ Trabaja' : '✗ No trabaja';
+                
+                // Sebastian, Juan Sarmiento, Oscar Riveros y Johan Velandia tienen horarios dinámicos según el ciclo de horarios
+                let horarioMostrar = analista.horario;
+                if (analista.nombre === 'Sebastian Ahumada') {
+                    horarioMostrar = obtenerHorarioSebastian(fechaNormalizada);
+                } else if (analista.nombre === 'Juan Sarmiento') {
+                    horarioMostrar = obtenerHorarioJuanSarmiento(fechaNormalizada);
+                } else if (analista.nombre === 'Oscar Riveros Rodriguez') {
+                    horarioMostrar = obtenerHorarioOscarRiveros(fechaNormalizada);
+                } else if (analista.nombre === 'Johan Velandia') {
+                    horarioMostrar = obtenerHorarioJohanVelandia(fechaNormalizada);
+                }
+                
+                html += `
+                    <div class="resultado-item ${claseEstado}">
+                        <div class="resultado-header">
+                            <div class="resultado-nombre">${analista.nombre}</div>
+                            <div class="resultado-estado ${claseEstado}">${estadoTexto}</div>
+                        </div>
+                        <div class="resultado-detalles">
+                            <div class="detalle-item">
+                                <div class="detalle-label">Horario</div>
+                                <div class="detalle-valor">${horarioMostrar}</div>
+                            </div>
+                            <div class="detalle-item">
+                                <div class="detalle-label">Grupo</div>
+                                <div class="detalle-valor">${analista.grupo}</div>
+                            </div>
+                            ${analista.rotacion_mi_vi ? `
+                            <div class="detalle-item">
+                                <div class="detalle-label">Patrón</div>
+                                <div class="detalle-valor">Rotación Mi-Vi</div>
+                            </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('resultados-content').innerHTML = html;
+            document.getElementById('resultados').classList.add('show');
+            
+            // Scroll suave a los resultados
+            document.getElementById('resultados').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function seleccionarTodos() {
+            document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = true);
+        }
+
+        function deseleccionarTodos() {
+            document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+        }
+
+        // Establecer fecha por defecto (hoy)
+        document.getElementById('fecha').valueAsDate = new Date();
+
+        // Cargar analistas al iniciar
+        cargarAnalistas();
+    </script>
+</body>
+</html>
+
