@@ -50,7 +50,7 @@ Cada empleado tiene:
 
 **Daniel Alfonso Lara Torres** tiene un patrón especial:
 - Trabaja **solo Miércoles, Jueves y Viernes**
-- **Daniel (Grupo A)**: Trabaja Mi-Vi según rotación de 10 días trabajo / 4 días descanso
+- **Daniel (Grupo B)**: Trabaja Mi-Vi según rotación de 10 días trabajo / 4 días descanso
 
 ## Estructura de Patrones
 

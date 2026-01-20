@@ -638,19 +638,19 @@
                     "trabaja_domingos": true,
                     "patron_semanal": {"1": true, "2": true, "3": true, "4": true, "5": true, "6": false, "7": false},
                     "rotacion_mi_vi": true,
-                    "nota": "Misma rotación que Grupo A (Daniel). Rotación 10 días trabajo / 4 días descanso"
+                    "nota": "Misma rotación que Grupo A. Rotación 10 días trabajo / 4 días descanso"
                 },
                 {
                     "nombre": "Daniel Alfonso Lara Torres",
                     "horario": "06:00 - 15:00",
-                    "grupo": "A",
+                    "grupo": "B",
                     "dias_laborales": [3, 4, 5],
                     "dias_laborales_texto": ["Miércoles", "Jueves", "Viernes"],
                     "trabaja_festivos": true,
                     "trabaja_domingos": true,
                     "patron_semanal": {"1": false, "2": false, "3": true, "4": true, "5": true, "6": false, "7": false},
                     "rotacion_mi_vi": true,
-                    "nota": "Misma rotación de días que Grupo A. Alterna horarios complemento de Oscar Riveros: 28 días (7 enero - 3 febrero) 06:00-15:00, luego 28 días (4 febrero - 3 marzo) 00:00-09:00. Inicio: 7 enero 2026 con 06:00-15:00"
+                    "nota": "Misma rotación de días que Grupo B. Alterna horarios complemento de Oscar Riveros: 28 días (7 enero - 3 febrero) 06:00-15:00, luego 28 días (4 febrero - 3 marzo) 00:00-09:00. Inicio: 7 enero 2026 con 06:00-15:00"
                 },
                 {
                     "nombre": "Juan Sarmiento",
@@ -662,7 +662,7 @@
                     "trabaja_domingos": true,
                     "patron_semanal": {"1": false, "2": false, "3": true, "4": true, "5": true, "6": false, "7": false},
                     "rotacion_mi_vi": true,
-                    "nota": "Misma rotación de días que Grupo A (Daniel). Alterna horarios: 2 ciclos (28 días) 00:00-09:00, luego 2 ciclos (28 días) 15:00-00:00. Inicio: 3 dic 2025 con 00:00-09:00 (complemento de Sebastian)"
+                    "nota": "Misma rotación de días que Grupo A. Alterna horarios: 2 ciclos (28 días) 00:00-09:00, luego 2 ciclos (28 días) 15:00-00:00. Inicio: 3 dic 2025 con 00:00-09:00 (complemento de Sebastian)"
                 },
                 {
                     "nombre": "Julian Sarmiento",
@@ -698,7 +698,7 @@
                     "trabaja_domingos": true,
                     "patron_semanal": {"1": false, "2": false, "3": true, "4": true, "5": true, "6": false, "7": false},
                     "rotacion_mi_vi": true,
-                    "nota": "Misma rotación de días que Grupo A (Daniel). Alterna horarios: 2 ciclos (28 días) 15:00-00:00, luego 2 ciclos (28 días) 00:00-09:00. Inicio: 3 dic 2025 con 15:00-00:00"
+                    "nota": "Misma rotación de días que Grupo A. Alterna horarios: 2 ciclos (28 días) 15:00-00:00, luego 2 ciclos (28 días) 00:00-09:00. Inicio: 3 dic 2025 con 15:00-00:00"
                 }
             ]
         };
@@ -720,7 +720,7 @@
         }
 
         // Fechas de inicio del ciclo según grupo
-        // Todos los empleados del Grupo A usan la misma rotación que Daniel (17 dic 2025)
+        // Todos los empleados del Grupo A usan la misma rotación (17 dic 2025)
         // Todos los empleados del Grupo B usan la misma rotación (10 dic 2025)
         // Usar componentes de fecha directamente para evitar problemas de zona horaria (UTC-5 Bogotá)
         const fechaInicioCicloPorGrupo = {
@@ -742,8 +742,8 @@
         
         function obtenerDiaCicloEmpleado(empleado, fecha) {
             // Cada empleado tiene un ciclo de 14 días según su grupo
-            // Grupo A: inicio 17 dic 2025 (misma rotación que Daniel)
-            // Grupo B: inicio 10 dic 2025 (misma rotación del Grupo B)
+            // Grupo A: inicio 17 dic 2025
+            // Grupo B: inicio 10 dic 2025
             // Días 1-10: trabaja
             // Días 11-14: descansa
             
@@ -909,7 +909,7 @@
             const diasAlternos = [6, 7, 1, 2]; // Sábado, Domingo, Lunes, Martes
 
             // PATRÓN ESPECIAL: Rotación 10 días trabajo / 4 días descanso por grupo
-            // Grupo A: mismo ciclo que Daniel (inicio 17 dic 2025)
+            // Grupo A: mismo ciclo (inicio 17 dic 2025)
             // Grupo B: mismo ciclo (inicio 10 dic 2025)
             // - Días 1-10: trabaja (todos los días, incluido Mi-Vi y Sáb-Dom-Lun-Mar)
             // - Días 11-14: descansa (todos los días)

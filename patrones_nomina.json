@@ -33,7 +33,7 @@
     {
       "nombre": "Daniel Alfonso Lara Torres",
       "horario": "06:00 - 15:00",
-      "grupo": "A",
+      "grupo": "B",
       "dias_laborales": [
         3,
         4,
@@ -56,7 +56,7 @@
         "7": false
       },
       "rotacion_mi_vi": true,
-      "nota": "Trabaja Mi-Vi solo en semanas que le toca Grupo A. Rotación 10 días trabajo / 4 días descanso"
+      "nota": "Trabaja Mi-Vi solo en semanas que le toca Grupo B. Rotación 10 días trabajo / 4 días descanso"
     },
     {
       "nombre": "Juan Sarmiento",
