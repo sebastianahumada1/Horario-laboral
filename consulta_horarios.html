@@ -686,7 +686,7 @@
                     "trabaja_domingos": true,
                     "patron_semanal": {"1": false, "2": false, "3": true, "4": true, "5": true, "6": true, "7": true},
                     "rotacion_mi_vi": true,
-                    "nota": "Misma rotación de días que Grupo B. Alterna horarios: 14 días (1 ciclo) 00:00-09:00, luego 56 días (4 ciclos) 06:00-15:00. Inicio: 3 sep 2025 con 00:00-09:00"
+                    "nota": "Misma rotación de días que Grupo B. Alterna horarios: 28 días (7 enero - 3 febrero) 00:00-09:00, luego 28 días (4 febrero - 3 marzo) 06:00-15:00. Inicio: 7 enero 2026 con 00:00-09:00"
                 },
                 {
                     "nombre": "Sebastian Ahumada",
@@ -734,11 +734,11 @@
         // Patrón: 28 días con un horario, luego 28 días con el otro, y se repite (ciclo completo de 56 días)
         const fechaInicioHorariosAlternados = new Date(2025, 11, 3, 12, 0, 0, 0); // 3 dic 2025
         
-        // Oscar Riveros tiene un patrón especial: ciclo completo de 70 días (5 ciclos de 14 días)
-        // Inicio: 3 sep 2025 con 00:00-09:00 (días 1-14)
-        // Cambio 1: 17 sep 2025 a 06:00-15:00 (días 15-70, 56 días = 4 ciclos)
-        // Cambio 2: 12 nov 2025 vuelve a 00:00-09:00 y se repite
-        const fechaInicioHorariosOscar = new Date(2025, 8, 3, 12, 0, 0, 0); // 3 sep 2025
+        // Oscar Riveros tiene un patrón especial: ciclo completo de 56 días (28 días cada horario)
+        // Inicio: 7 enero 2026 con 00:00-09:00 (hasta 3 febrero, 28 días)
+        // Cambio 1: 4 febrero 2026 a 06:00-15:00 (hasta 3 marzo, 28 días)
+        // Cambio 2: 4 marzo 2026 vuelve a 00:00-09:00 y se repite
+        const fechaInicioHorariosOscar = new Date(2026, 0, 7, 12, 0, 0, 0); // 7 enero 2026
         
         function obtenerDiaCicloEmpleado(empleado, fecha) {
             // Cada empleado tiene un ciclo de 14 días según su grupo
@@ -840,11 +840,11 @@
         }
         
         function obtenerHorarioOscarRiveros(fecha) {
-            // Oscar Riveros: ciclo completo de 70 días (5 ciclos de 14 días)
-            // Inicio: 3 sep 2025 con horario 00:00-09:00
-            // Días 1-14 (3 sep - 17 sep): 00:00-09:00
-            // Días 15-70 (17 sep - 12 nov): 06:00-15:00 (56 días = 4 ciclos)
-            // Día 71 (12 nov): vuelve a 00:00-09:00 y se repite
+            // Oscar Riveros: ciclo completo de 56 días (28 días cada horario)
+            // Inicio: 7 enero 2026 con horario 00:00-09:00
+            // Días 0-27 (7 enero - 3 febrero): 00:00-09:00 (28 días)
+            // Días 28-55 (4 febrero - 3 marzo): 06:00-15:00 (28 días)
+            // Día 56 (4 marzo): vuelve a 00:00-09:00 y se repite
             
             const fechaInicioNorm = new Date(fechaInicioHorariosOscar.getFullYear(), fechaInicioHorariosOscar.getMonth(), fechaInicioHorariosOscar.getDate(), 12, 0, 0, 0);
             const fechaNorm = new Date(fecha.getFullYear(), fecha.getMonth(), fecha.getDate(), 12, 0, 0, 0);
@@ -852,12 +852,12 @@
             const delta = fechaNorm - fechaInicioNorm;
             const diasDesdeInicio = Math.floor(delta / (1000 * 60 * 60 * 24));
             
-            // Calcular día dentro del ciclo completo de 70 días
-            const diaEnCiclo = ((diasDesdeInicio % 70) + 70) % 70;
+            // Calcular día dentro del ciclo completo de 56 días
+            const diaEnCiclo = ((diasDesdeInicio % 56) + 56) % 56;
             
-            // Si está en días 0-13 (primer ciclo de 14 días): horario 00:00-09:00
-            // Si está en días 14-69 (4 ciclos siguientes de 14 días): horario 06:00-15:00
-            if (diaEnCiclo < 14) {
+            // Si está en días 0-27 (primer período de 28 días): horario 00:00-09:00
+            // Si está en días 28-55 (segundo período de 28 días): horario 06:00-15:00
+            if (diaEnCiclo < 28) {
                 return '00:00 - 09:00';
             } else {
                 return '06:00 - 15:00';
@@ -1127,35 +1127,35 @@
                 rotaciones.push({ horario: '00:00 - 09:00', inicio: inicioSiguiente1, fin: finSiguiente1 });
                 
             } else if (nombreEmpleado === 'Oscar Riveros Rodriguez') {
-                // Oscar: ciclo de 70 días (14 días 00:00-09:00, luego 56 días 06:00-15:00)
-                // Inicio: 3 sep 2025 con 00:00-09:00
-                const fechaInicio = new Date(2025, 8, 3, 12, 0, 0, 0); // 3 sep 2025
+                // Oscar: ciclo de 56 días (28 días 00:00-09:00, luego 28 días 06:00-15:00)
+                // Inicio: 7 enero 2026 con 00:00-09:00
+                const fechaInicio = new Date(2026, 0, 7, 12, 0, 0, 0); // 7 enero 2026
                 
                 const delta = fechaRef - fechaInicio;
                 const diasDesdeInicio = Math.floor(delta / (1000 * 60 * 60 * 24));
-                const ciclosCompletos = Math.floor(diasDesdeInicio / 70);
+                const ciclosCompletos = Math.floor(diasDesdeInicio / 56);
                 
                 const inicioCicloActual = new Date(fechaInicio);
-                inicioCicloActual.setDate(inicioCicloActual.getDate() + (ciclosCompletos * 70));
+                inicioCicloActual.setDate(inicioCicloActual.getDate() + (ciclosCompletos * 56));
                 
-                // Período 1: 14 días con horario 00:00-09:00
+                // Período 1: 28 días con horario 00:00-09:00 (7 enero - 3 febrero)
                 const inicio1 = new Date(inicioCicloActual);
                 const fin1 = new Date(inicio1);
-                fin1.setDate(fin1.getDate() + 13);
+                fin1.setDate(fin1.getDate() + 27);
                 rotaciones.push({ horario: '00:00 - 09:00', inicio: inicio1, fin: fin1 });
                 
-                // Período 2: 56 días con horario 06:00-15:00
+                // Período 2: 28 días con horario 06:00-15:00 (4 febrero - 3 marzo)
                 const inicio2 = new Date(fin1);
                 inicio2.setDate(inicio2.getDate() + 1);
                 const fin2 = new Date(inicio2);
-                fin2.setDate(fin2.getDate() + 55);
+                fin2.setDate(fin2.getDate() + 27);
                 rotaciones.push({ horario: '06:00 - 15:00', inicio: inicio2, fin: fin2 });
                 
                 // Agregar siguiente ciclo
                 const inicioSiguiente1 = new Date(fin2);
                 inicioSiguiente1.setDate(inicioSiguiente1.getDate() + 1);
                 const finSiguiente1 = new Date(inicioSiguiente1);
-                finSiguiente1.setDate(finSiguiente1.getDate() + 13);
+                finSiguiente1.setDate(finSiguiente1.getDate() + 27);
                 rotaciones.push({ horario: '00:00 - 09:00', inicio: inicioSiguiente1, fin: finSiguiente1 });
                 
             }
