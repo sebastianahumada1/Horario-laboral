@@ -56,65 +56,7 @@
         "7": false
       },
       "rotacion_mi_vi": true,
-      "nota": "Trabaja Mi-Vi solo en semanas que le toca Grupo A. Alterna semanalmente con Juan David Gahona Ramirez (Grupo B)"
-    },
-    {
-      "nombre": "Johan Velandia",
-      "horario": "06:00 - 15:00",
-      "grupo": "B",
-      "dias_laborales": [
-        3,
-        4,
-        5,
-        6,
-        7
-      ],
-      "dias_laborales_texto": [
-        "Miércoles",
-        "Jueves",
-        "Viernes",
-        "Sábado",
-        "Domingo"
-      ],
-      "trabaja_festivos": true,
-      "trabaja_domingos": true,
-      "patron_semanal": {
-        "1": false,
-        "2": false,
-        "3": true,
-        "4": true,
-        "5": true,
-        "6": true,
-        "7": true
-      }
-    },
-    {
-      "nombre": "Juan David Gahona Ramirez",
-      "horario": "06:00 - 15:00",
-      "grupo": "B",
-      "dias_laborales": [
-        3,
-        4,
-        5
-      ],
-      "dias_laborales_texto": [
-        "Miércoles",
-        "Jueves",
-        "Viernes"
-      ],
-      "trabaja_festivos": true,
-      "trabaja_domingos": true,
-      "patron_semanal": {
-        "1": false,
-        "2": false,
-        "3": true,
-        "4": true,
-        "5": true,
-        "6": false,
-        "7": false
-      },
-      "rotacion_mi_vi": true,
-      "nota": "Trabaja Mi-Vi solo en semanas que le toca Grupo B. Alterna semanalmente con Daniel Alfonso Lara Torres (Grupo A)"
+      "nota": "Trabaja Mi-Vi solo en semanas que le toca Grupo A. Rotación 10 días trabajo / 4 días descanso"
     },
     {
       "nombre": "Juan Sarmiento",

@@ -48,11 +48,9 @@ Cada empleado tiene:
 
 ### Patrón Especial de Rotación Mi-Vi
 
-**Daniel Alfonso Lara Torres** y **Juan David Gahona Ramirez** tienen un patrón especial:
-- Ambos trabajan **solo Miércoles, Jueves y Viernes**
-- **Daniel (Grupo A)**: Trabaja Mi-Vi en semanas pares (según fecha de inicio)
-- **Juan (Grupo B)**: Trabaja Mi-Vi en semanas impares (alternando con Daniel)
-- Rotan semanalmente: cuando Daniel trabaja, Juan descansa y viceversa
+**Daniel Alfonso Lara Torres** tiene un patrón especial:
+- Trabaja **solo Miércoles, Jueves y Viernes**
+- **Daniel (Grupo A)**: Trabaja Mi-Vi según rotación de 10 días trabajo / 4 días descanso
 
 ## Estructura de Patrones
 

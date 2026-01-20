@@ -31,8 +31,7 @@ def obtener_tipo_dia(fecha):
 
 # Fechas de inicio del ciclo para cada empleado con patrón rotación
 FECHAS_INICIO_CICLO = {
-    'Daniel Alfonso Lara Torres': datetime.strptime('17/12/24', '%d/%m/%y'),  # Miércoles 17 dic - día 1 del ciclo
-    'Juan David Gahona Ramirez': datetime.strptime('10/12/24', '%d/%m/%y')    # Lunes 10 dic - día 1 del ciclo (el 19 dic está en día 10)
+    'Daniel Alfonso Lara Torres': datetime.strptime('17/12/24', '%d/%m/%y')  # Miércoles 17 dic - día 1 del ciclo
 }
 
 def obtener_dia_ciclo_empleado(empleado, fecha):

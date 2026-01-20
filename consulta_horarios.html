@@ -653,30 +653,6 @@
                     "nota": "Rotación 10 días trabajo / 4 días descanso. Misma rotación que todos los del Grupo A (inicio 17 dic 2025)"
                 },
                 {
-                    "nombre": "Johan Velandia",
-                    "horario": "06:00 - 15:00",
-                    "grupo": "B",
-                    "dias_laborales": [3, 4, 5, 6, 7],
-                    "dias_laborales_texto": ["Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"],
-                    "trabaja_festivos": true,
-                    "trabaja_domingos": true,
-                    "patron_semanal": {"1": false, "2": false, "3": true, "4": true, "5": true, "6": true, "7": true},
-                    "rotacion_mi_vi": true,
-                    "nota": "Misma rotación de días que Grupo B (Juan Gahona). Alterna horarios complementario de Oscar Riveros: 14 días (1 ciclo) 06:00-15:00, luego 56 días (4 ciclos) 00:00-09:00. Inicio: 3 sep 2025 con 06:00-15:00"
-                },
-                {
-                    "nombre": "Juan David Gahona Ramirez",
-                    "horario": "06:00 - 15:00",
-                    "grupo": "B",
-                    "dias_laborales": [3, 4, 5],
-                    "dias_laborales_texto": ["Miércoles", "Jueves", "Viernes"],
-                    "trabaja_festivos": true,
-                    "trabaja_domingos": true,
-                    "patron_semanal": {"1": false, "2": false, "3": true, "4": true, "5": true, "6": false, "7": false},
-                    "rotacion_mi_vi": true,
-                    "nota": "Rotación 10 días trabajo / 4 días descanso. Misma rotación que todos los del Grupo B (inicio 10 dic 2025)"
-                },
-                {
                     "nombre": "Juan Sarmiento",
                     "horario": "00:00 - 09:00",
                     "grupo": "A",
@@ -698,7 +674,7 @@
                     "trabaja_domingos": true,
                     "patron_semanal": {"1": false, "2": false, "3": true, "4": true, "5": true, "6": true, "7": true},
                     "rotacion_mi_vi": true,
-                    "nota": "Misma rotación que Grupo B (Juan Gahona). Rotación 10 días trabajo / 4 días descanso"
+                    "nota": "Misma rotación que Grupo B. Rotación 10 días trabajo / 4 días descanso"
                 },
                 {
                     "nombre": "Oscar Riveros Rodriguez",
@@ -710,7 +686,7 @@
                     "trabaja_domingos": true,
                     "patron_semanal": {"1": false, "2": false, "3": true, "4": true, "5": true, "6": true, "7": true},
                     "rotacion_mi_vi": true,
-                    "nota": "Misma rotación de días que Grupo B (Juan Gahona). Alterna horarios: 14 días (1 ciclo) 00:00-09:00, luego 56 días (4 ciclos) 06:00-15:00. Inicio: 3 sep 2025 con 00:00-09:00"
+                    "nota": "Misma rotación de días que Grupo B. Alterna horarios: 14 días (1 ciclo) 00:00-09:00, luego 56 días (4 ciclos) 06:00-15:00. Inicio: 3 sep 2025 con 00:00-09:00"
                 },
                 {
                     "nombre": "Sebastian Ahumada",
@@ -745,7 +721,7 @@
 
         // Fechas de inicio del ciclo según grupo
         // Todos los empleados del Grupo A usan la misma rotación que Daniel (17 dic 2025)
-        // Todos los empleados del Grupo B usan la misma rotación que Juan Gahona (10 dic 2025)
+        // Todos los empleados del Grupo B usan la misma rotación (10 dic 2025)
         // Usar componentes de fecha directamente para evitar problemas de zona horaria (UTC-5 Bogotá)
         const fechaInicioCicloPorGrupo = {
             'A': new Date(2025, 11, 17, 12, 0, 0, 0), // Miércoles 17 dic 2025 - día 1 del ciclo (mes 11 = diciembre)
@@ -767,7 +743,7 @@
         function obtenerDiaCicloEmpleado(empleado, fecha) {
             // Cada empleado tiene un ciclo de 14 días según su grupo
             // Grupo A: inicio 17 dic 2025 (misma rotación que Daniel)
-            // Grupo B: inicio 10 dic 2025 (misma rotación que Juan Gahona)
+            // Grupo B: inicio 10 dic 2025 (misma rotación del Grupo B)
             // Días 1-10: trabaja
             // Días 11-14: descansa
             
@@ -888,31 +864,6 @@
             }
         }
         
-        function obtenerHorarioJohanVelandia(fecha) {
-            // Johan Velandia: complemento de Oscar Riveros, mismo ciclo de 70 días pero horarios invertidos
-            // Inicio: 3 sep 2025 con horario 06:00-15:00 (opuesto a Oscar)
-            // Días 1-14 (3 sep - 17 sep): 06:00-15:00 (mientras Oscar está en 00:00-09:00)
-            // Días 15-70 (17 sep - 12 nov): 00:00-09:00 (mientras Oscar está en 06:00-15:00)
-            // Día 71 (12 nov): vuelve a 06:00-15:00 y se repite
-            
-            const fechaInicioNorm = new Date(fechaInicioHorariosOscar.getFullYear(), fechaInicioHorariosOscar.getMonth(), fechaInicioHorariosOscar.getDate(), 12, 0, 0, 0);
-            const fechaNorm = new Date(fecha.getFullYear(), fecha.getMonth(), fecha.getDate(), 12, 0, 0, 0);
-            
-            const delta = fechaNorm - fechaInicioNorm;
-            const diasDesdeInicio = Math.floor(delta / (1000 * 60 * 60 * 24));
-            
-            // Calcular día dentro del ciclo completo de 70 días (mismo que Oscar)
-            const diaEnCiclo = ((diasDesdeInicio % 70) + 70) % 70;
-            
-            // Si está en días 0-13 (primer ciclo de 14 días): horario 06:00-15:00 (opuesto a Oscar)
-            // Si está en días 14-69 (4 ciclos siguientes de 14 días): horario 00:00-09:00 (opuesto a Oscar)
-            if (diaEnCiclo < 14) {
-                return '06:00 - 15:00';
-            } else {
-                return '00:00 - 09:00';
-            }
-        }
-
         function obtenerTipoDia(fecha) {
             const diaSemana = fecha.getDay();
             if (diaSemana === 0) return 'Domingo';
@@ -934,7 +885,7 @@
 
             // PATRÓN ESPECIAL: Rotación 10 días trabajo / 4 días descanso por grupo
             // Grupo A: mismo ciclo que Daniel (inicio 17 dic 2025)
-            // Grupo B: mismo ciclo que Juan Gahona (inicio 10 dic 2025)
+            // Grupo B: mismo ciclo (inicio 10 dic 2025)
             // - Días 1-10: trabaja (todos los días, incluido Mi-Vi y Sáb-Dom-Lun-Mar)
             // - Días 11-14: descansa (todos los días)
             const esPatronRotacion = analista.rotacion_mi_vi === true;
@@ -1045,7 +996,7 @@
                 const claseEstado = trabaja ? 'trabaja' : 'no-trabaja';
                 const estadoTexto = trabaja ? '✓ Trabaja' : '✗ No trabaja';
                 
-                // Sebastian, Juan Sarmiento, Oscar Riveros y Johan Velandia tienen horarios dinámicos según el ciclo de horarios
+                // Sebastian, Juan Sarmiento y Oscar Riveros tienen horarios dinámicos según el ciclo de horarios
                 let horarioMostrar = analista.horario;
                 if (analista.nombre === 'Sebastian Ahumada') {
                     horarioMostrar = obtenerHorarioSebastian(fechaNormalizada);
@@ -1053,8 +1004,6 @@
                     horarioMostrar = obtenerHorarioJuanSarmiento(fechaNormalizada);
                 } else if (analista.nombre === 'Oscar Riveros Rodriguez') {
                     horarioMostrar = obtenerHorarioOscarRiveros(fechaNormalizada);
-                } else if (analista.nombre === 'Johan Velandia') {
-                    horarioMostrar = obtenerHorarioJohanVelandia(fechaNormalizada);
                 }
                 
                 html += `
@@ -1209,37 +1158,6 @@
                 finSiguiente1.setDate(finSiguiente1.getDate() + 13);
                 rotaciones.push({ horario: '00:00 - 09:00', inicio: inicioSiguiente1, fin: finSiguiente1 });
                 
-            } else if (nombreEmpleado === 'Johan Velandia') {
-                // Johan: ciclo de 70 días (14 días 06:00-15:00, luego 56 días 00:00-09:00), complemento de Oscar
-                // Inicio: 3 sep 2025 con 06:00-15:00
-                const fechaInicio = new Date(2025, 8, 3, 12, 0, 0, 0); // 3 sep 2025
-                
-                const delta = fechaRef - fechaInicio;
-                const diasDesdeInicio = Math.floor(delta / (1000 * 60 * 60 * 24));
-                const ciclosCompletos = Math.floor(diasDesdeInicio / 70);
-                
-                const inicioCicloActual = new Date(fechaInicio);
-                inicioCicloActual.setDate(inicioCicloActual.getDate() + (ciclosCompletos * 70));
-                
-                // Período 1: 14 días con horario 06:00-15:00
-                const inicio1 = new Date(inicioCicloActual);
-                const fin1 = new Date(inicio1);
-                fin1.setDate(fin1.getDate() + 13);
-                rotaciones.push({ horario: '06:00 - 15:00', inicio: inicio1, fin: fin1 });
-                
-                // Período 2: 56 días con horario 00:00-09:00
-                const inicio2 = new Date(fin1);
-                inicio2.setDate(inicio2.getDate() + 1);
-                const fin2 = new Date(inicio2);
-                fin2.setDate(fin2.getDate() + 55);
-                rotaciones.push({ horario: '00:00 - 09:00', inicio: inicio2, fin: fin2 });
-                
-                // Agregar siguiente ciclo
-                const inicioSiguiente1 = new Date(fin2);
-                inicioSiguiente1.setDate(inicioSiguiente1.getDate() + 1);
-                const finSiguiente1 = new Date(inicioSiguiente1);
-                finSiguiente1.setDate(finSiguiente1.getDate() + 13);
-                rotaciones.push({ horario: '06:00 - 15:00', inicio: inicioSiguiente1, fin: finSiguiente1 });
             }
             
             return rotaciones;
@@ -1257,7 +1175,7 @@
             }
             
             // Empleados que tienen rotación de horarios
-            const empleadosConRotacion = ['Sebastian Ahumada', 'Juan Sarmiento', 'Oscar Riveros Rodriguez', 'Johan Velandia'];
+            const empleadosConRotacion = ['Sebastian Ahumada', 'Juan Sarmiento', 'Oscar Riveros Rodriguez'];
             const fechaActual = new Date();
             
             let html = '';
